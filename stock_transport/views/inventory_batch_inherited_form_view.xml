@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="inventory_batch_view_form_inherit" model="ir.ui.view">
+        <field name="name">inventory.batch.view.form.inherit</field>
+        <field name="model">stock.picking.batch</field>
+        <field name="inherit_id" ref="stock_picking_batch.stock_picking_batch_form"/>
+        <field name="arch" type="xml">
+            <xpath expr='//field[@name="scheduled_date"]' position='after'>
+                <field name="dock_id"/>
+                <field name="vehicle_id" placeholder="Third Party Provider"/>
+                <field name="vehicle_category_id" placeholder="e.g. Semi-truck"/>
+                <div>
+                    <div class="d-flex justify-content-between" style="width:1rem">
+                        <p style="margin-right: 7rem">Weight</p>
+                        <div class="d-flex ms-5">
+                            <field name="weight" invisible="not vehicle_category_id" string="Weight" class="me-2 ms-5"/>
+                            <field name="weight_perc" invisible="not vehicle_category_id" widget="progressbar"/>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between" style="width:15rem">
+                        <p style="margin-right: 7rem">Volume</p>
+                        <div class="d-flex ms-5">
+                            <field name="volume" invisible="not vehicle_category_id" string="Volume" class="me-2 ms-5"/>
+                            <field name="volume_perc" invisible="not vehicle_category_id" widget="progressbar"/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="stock_picking_tree_view_inherited" model="ir.ui.view">
+        <field name="name">stock.picking.tree.view</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='scheduled_date']" position="after">
+                <field name="volume" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_stock_picking_batch_graph" model="ir.ui.view">
+        <field name="name">stock.picking.batch.graph</field>
+        <field name="model">stock.picking.batch</field>
+        <field name="arch" type="xml">
+            <graph string="Batch Tranfers">
+                <field name="volume" type="measure"/>
+                <field name="weight" type="measure"/>
+                <field name="no_of_transfers" type="measure"/>
+                <field name="no_of_lines" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_stock_picking_batch_gantt" model="ir.ui.view">
+        <field name="name">stock.picking.batch.gantt</field>
+        <field name="model">stock.picking.batch</field>
+        <field name="arch" type="xml">
+            <gantt>
+                <field name="volume" type="measure"/>
+                <field name="weight" type="measure"/>
+                <field name="no_of_transfers" type="measure"/>
+                <field name="no_of_lines" type="measure"/>
+            </gantt>
+        </field>
+    </record>
+
+    <record id="stock_picking_batch.stock_picking_batch_action" model="ir.actions.act_window">
+        <field name="view_mode">tree,kanban,graph,form,gantt</field>
+        <field name="context">
+            {
+                'graph_mode': 'bar',
+                'graph_groupbys': ['scheduled_date', 'vehicle_category_id'],
+            }
+        </field>
+    </record>
+</odoo>
