@@ -2,6 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields, models, api
+from odoo.exceptions import ValidationError
 
 class InventoryBatch(models.Model):
     _inherit = "stock.picking.batch"
@@ -15,22 +16,23 @@ class InventoryBatch(models.Model):
     volume_perc = fields.Float(compute="_compute_percentage")
     no_of_transfers = fields.Integer(compute="_compute_no_of_transfers", store=True)
     no_of_lines = fields.Integer(compute="_compute_no_of_lines", store=True)
+    driver_id = fields.Many2one(related='vehicle_id.driver_id', store=True)
+
+    @api.constrains('volume')
+    def _check_volume_perc(self):
+        for rec in self:
+            if rec.volume > rec.vehicle_category_id.max_volume:
+                raise ValidationError('Volume Precentage cannot be greater than 100%')
 
     @api.depends('picking_ids')
     def _compute_total_volume(self):
         for rec in self:
-            vol=0
-            for prod in rec.picking_ids:
-                vol += rec.picking_ids.volume
-            rec.volume = vol
-
+            rec.volume = sum(rec.picking_ids.mapped('volume'))
+            
     @api.depends('picking_ids')
     def _compute_total_weight(self):
         for rec in self:
-            wght=0
-            for prod in rec.picking_ids:
-                wght += prod.shipping_weight
-            rec.weight = wght
+            rec.weight = sum(rec.picking_ids.mapped('shipping_weight'))
 
     @api.depends('weight','volume')
     def _compute_percentage(self):

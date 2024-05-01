@@ -7,8 +7,8 @@
     'depends': ['stock_picking_batch', 'fleet', 'stock_delivery'],
     'data': [
         'security/ir.model.access.csv',
-        'views/fleet_category_inherited_tree_view.xml',
-        'views/inventory_batch_inherited_form_view.xml',
+        'views/fleet_category_views.xml',
+        'views/inventory_batch_transfers_views.xml',
     ],
     'demo': [],
     'application': True,
