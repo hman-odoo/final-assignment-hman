@@ -51,6 +51,7 @@
                 default_group_by="dock_id,vehicle_id"
                 color="vehicle_id"
                 decoration-success="state == 'done'"
+                decoration-info="state == 'draft'"
                 >
                 <field name="state"/>
             </gantt>

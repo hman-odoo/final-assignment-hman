@@ -22,14 +22,14 @@ class InventoryBatch(models.Model):
     def _check_volume_perc(self):
         for rec in self:
             if rec.volume > rec.vehicle_category_id.max_volume:
-                raise ValidationError('Volume Precentage cannot be greater than 100%')
+                raise ValidationError('Volume precentage cannot be greater than 100%')
 
-    @api.depends('picking_ids')
+    @api.depends('picking_ids.volume')
     def _compute_total_volume(self):
         for rec in self:
             rec.volume = sum(rec.picking_ids.mapped('volume'))
             
-    @api.depends('picking_ids')
+    @api.depends('picking_ids.shipping_weight')
     def _compute_total_weight(self):
         for rec in self:
             rec.weight = sum(rec.picking_ids.mapped('shipping_weight'))
